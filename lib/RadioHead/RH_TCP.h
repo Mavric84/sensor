@@ -138,7 +138,7 @@ public:
     /// You would normally set the header FROM address to be the same as thisAddress (though you dont have to, 
     /// allowing the possibilty of address spoofing).
     /// \param[in] address The address of this node.
-    void setThisAddress(uint8_t address);
+    void setThisAddress(int32_t address);
 
 protected:
 
@@ -158,7 +158,7 @@ private:
     /// in a RHTcpThisAddress message.
     /// \param[in] thisAddress The node address of this node
     /// \return true if successful
-    bool sendThisAddress(uint8_t thisAddress);
+    bool sendThisAddress(int32_t thisAddress);
 
     /// Sends a message to the ether simulator server for delivery to
     /// other nodes

@@ -137,8 +137,8 @@ public:
     /// Defines the structure of the RHRouter message header, used to keep track of end-to-end delivery parameters
     typedef struct
     {
-	uint8_t    dest;       ///< Destination node address
-	uint8_t    source;     ///< Originator node address
+	int32_t    dest;       ///< Destination node address
+	int32_t    source;     ///< Originator node address
 	uint8_t    hops;       ///< Hops traversed so far
 	uint8_t    id;         ///< Originator sequence number
 	uint8_t    flags;      ///< Originator flags
@@ -163,15 +163,15 @@ public:
     /// Defines an entry in the routing table
     typedef struct
     {
-	uint8_t      dest;      ///< Destination node address
-	uint8_t      next_hop;  ///< Send via this next hop address
+	int32_t      dest;      ///< Destination node address
+	int32_t      next_hop;  ///< Send via this next hop address
 	uint8_t      state;     ///< State of this route, one of RouteState
     } RoutingTableEntry;
 
     /// Constructor. 
     /// \param[in] driver The RadioHead driver to use to transport messages.
     /// \param[in] thisAddress The address to assign to this node. Defaults to 0
-    RHRouter(RHGenericDriver& driver, uint8_t thisAddress = 0);
+    RHRouter(RHGenericDriver& driver, int32_t thisAddress = 0);
 
     /// Initialises this instance and the radio module connected to it.
     /// Overrides the init() function in RH.
@@ -198,17 +198,17 @@ public:
     /// \param [in] dest The destination node address. RH_BROADCAST_ADDRESS is permitted.
     /// \param [in] next_hop The address of the next hop to send messages destined for dest
     /// \param [in] state The satte of the route. Defaults to Valid
-    void addRouteTo(uint8_t dest, uint8_t next_hop, uint8_t state = Valid);
+    void addRouteTo(int32_t dest, int32_t next_hop, uint8_t state = Valid);
 
     /// Finds and returns a RoutingTableEntry for the given destination node
     /// \param [in] dest The desired destination node address.
     /// \return pointer to a RoutingTableEntry for dest
-    RoutingTableEntry* getRouteTo(uint8_t dest);
+    RoutingTableEntry* getRouteTo(int32_t dest);
 
     /// Deletes from the local routing table any route for the destination node.
     /// \param [in] dest The destination node address
     /// \return true if the route was present
-    bool deleteRouteTo(uint8_t dest);
+    bool deleteRouteTo(int32_t dest);
 
     /// Deletes the oldest (first) route from the 
     /// local routing table
@@ -247,7 +247,7 @@ public:
     ///         - RH_ROUTER_ERROR_NO_ROUTE There was no route for dest in the local routing table
     ///         - RH_ROUTER_ERROR_UNABLE_TO_DELIVER Not able to deliver to the next hop 
     ///           (usually because it dod not acknowledge due to being off the air or out of range
-    uint8_t sendtoWait(uint8_t* buf, uint8_t len, uint8_t dest, uint8_t flags = 0);
+    uint8_t sendtoWait(uint8_t* buf, uint8_t len, int32_t dest, uint8_t flags = 0);
 
     /// Similar to sendtoWait() above, but spoofs the source address.
     /// For internal use only during routing
@@ -263,7 +263,7 @@ public:
     ///         - RH_ROUTER_ERROR_NO_ROUTE There was no route for dest in the local routing table
     ///         - RH_ROUTER_ERROR_UNABLE_TO_DELIVER Noyt able to deliver to the next hop 
     ///           (usually because it dod not acknowledge due to being off the air or out of range
-    uint8_t sendtoFromSourceWait(uint8_t* buf, uint8_t len, uint8_t dest, uint8_t source, uint8_t flags = 0);
+    uint8_t sendtoFromSourceWait(uint8_t* buf, uint8_t len, int32_t dest, int32_t source, uint8_t flags = 0);
 
     /// Starts the receiver if it is not running already.
     /// If there is a valid message available for this node (or RH_BROADCAST_ADDRESS), 
@@ -286,7 +286,7 @@ public:
     /// \param[in] hops If present and not NULL, the referenced uint8_t will be set to the HOPS
     /// (not just those addressed to this node).
     /// \return true if a valid message was recvived for this node copied to buf
-    bool recvfromAck(uint8_t* buf, uint8_t* len, uint8_t* source = NULL, uint8_t* dest = NULL, uint8_t* id = NULL, uint8_t* flags = NULL, uint8_t* hops = NULL);
+    bool recvfromAck(uint8_t* buf, uint8_t* len, int32_t* source = NULL, int32_t* dest = NULL, uint8_t* id = NULL, uint8_t* flags = NULL, uint8_t* hops = NULL);
 
     /// Starts the receiver if it is not running already.
     /// Similar to recvfromAck(), this will block until either a valid message available for this node
@@ -301,7 +301,7 @@ public:
     /// \param[in] hops If present and not NULL, the referenced uint8_t will be set to the HOPS
     /// (not just those addressed to this node).
     /// \return true if a valid message was copied to buf
-    bool recvfromAckTimeout(uint8_t* buf, uint8_t* len,  uint16_t timeout, uint8_t* source = NULL, uint8_t* dest = NULL, uint8_t* id = NULL, uint8_t* flags = NULL, uint8_t* hops = NULL);
+    bool recvfromAckTimeout(uint8_t* buf, uint8_t* len,  uint16_t timeout, int32_t* source = NULL, int32_t* dest = NULL, uint8_t* id = NULL, uint8_t* flags = NULL, uint8_t* hops = NULL);
 
 protected:
 

@@ -31,8 +31,10 @@ String readFile(fs::FS &fs, const char * path){ //Чтение файла из s
 
 RH_SX126x radio (8, 3, 4, 5);
 
-#define BRIDGE_ADDRESS 77562  // address of the bridge ( we send our data to, hopefully the bridge knows what to do with our data )
-#define NODE_ADDRESS 2    // address of this node
+//#define BRIDGE_ADDRESS 77562  // address of the bridge ( we send our data to, hopefully the bridge knows what to do with our data )
+//#define NODE_ADDRESS 2    // address of this node
+int32_t BRIDGE_ADDRESS = 255255255;  // address of the bridge ( we send our data to, hopefully the bridge knows what to do with our data )
+int32_t NODE_ADDRESS = 0x010001; //default
 
 #define TXINTERVAL 3000
 unsigned long nextTxTime;
@@ -44,7 +46,9 @@ unsigned long nextTxTime;
 RHMesh manager(radio, NODE_ADDRESS);
 
 
-int sens_id = 010001;
+
+
+//int32_t sens_id = 0x010001;
 
 
 IPAddress localIP(192,168,5,10);
@@ -82,7 +86,7 @@ void setup(void) {
   }
   radio.setFrequency(868.0);
 */
-  RHMesh manager(radio, sens_id);
+  //RHMesh manager(radio, sens_id);
 
 //RHMesh manager(radio, BRIDGE_ADDRESS);
 //manager = new RHMesh(radio, NODE_ADDRESS);
@@ -151,7 +155,7 @@ void loop(void) {
   
   // radio needs to stay always in receive mode ( to process/forward messages )
   uint8_t len = sizeof(buf);
-  uint8_t from;
+  int32_t from;
   if (manager.recvfromAck(buf, &len, &from))
     {
     Serial.print("message from node n.");

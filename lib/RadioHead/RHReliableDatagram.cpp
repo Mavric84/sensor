@@ -15,7 +15,7 @@
 
 ////////////////////////////////////////////////////////////////////
 // Constructors
-RHReliableDatagram::RHReliableDatagram(RHGenericDriver& driver, uint8_t thisAddress) 
+RHReliableDatagram::RHReliableDatagram(RHGenericDriver& driver, int32_t thisAddress) 
     : RHDatagram(driver, thisAddress)
 {
     _retransmissions = 0;
@@ -45,7 +45,7 @@ uint8_t RHReliableDatagram::retries()
 }
 
 ////////////////////////////////////////////////////////////////////
-bool RHReliableDatagram::sendtoWait(uint8_t* buf, uint8_t len, uint8_t address)
+bool RHReliableDatagram::sendtoWait(uint8_t* buf, uint8_t len, int32_t address)
 {
     // Assemble the message
     uint8_t thisSequenceNumber = ++_lastSequenceNumber;
@@ -93,7 +93,11 @@ bool RHReliableDatagram::sendtoWait(uint8_t* buf, uint8_t len, uint8_t address)
 	{
 	    if (waitAvailableTimeout(timeLeft))
 	    {
-		uint8_t from, to, id, flags;
+		//uint8_t from, to, id, flags;
+		  int32_t from;
+    		int32_t to;
+    		uint8_t id;
+    		uint8_t flags;
 		if (recvfrom(0, 0, &from, &to, &id, &flags)) // Discards the message
 		{
 		    // Now have a message: is it our ACK?
@@ -125,10 +129,10 @@ bool RHReliableDatagram::sendtoWait(uint8_t* buf, uint8_t len, uint8_t address)
 }
 
 ////////////////////////////////////////////////////////////////////
-bool RHReliableDatagram::recvfromAck(uint8_t* buf, uint8_t* len, uint8_t* from, uint8_t* to, uint8_t* id, uint8_t* flags)
+bool RHReliableDatagram::recvfromAck(uint8_t* buf, uint8_t* len, int32_t* from, int32_t* to, uint8_t* id, uint8_t* flags)
 {  
-    uint8_t _from;
-    uint8_t _to;
+    int32_t _from;
+    int32_t _to;
     uint8_t _id;
     uint8_t _flags;
     // Get the message before its clobbered by the ACK (shared rx and tx buffer in some drivers
@@ -176,7 +180,7 @@ bool RHReliableDatagram::recvfromAck(uint8_t* buf, uint8_t* len, uint8_t* from, 
     return false;
 }
 
-bool RHReliableDatagram::recvfromAckTimeout(uint8_t* buf, uint8_t* len, uint16_t timeout, uint8_t* from, uint8_t* to, uint8_t* id, uint8_t* flags)
+bool RHReliableDatagram::recvfromAckTimeout(uint8_t* buf, uint8_t* len, uint16_t timeout, int32_t* from, int32_t* to, uint8_t* id, uint8_t* flags)
 {
     unsigned long starttime = millis();
     int32_t timeLeft;
@@ -202,7 +206,7 @@ void RHReliableDatagram::resetRetransmissions()
     _retransmissions = 0;
 }
  
-void RHReliableDatagram::acknowledge(uint8_t id, uint8_t from)
+void RHReliableDatagram::acknowledge(uint8_t id, int32_t from)
 {
     setHeaderId(id);
     setHeaderFlags(RH_FLAGS_ACK);

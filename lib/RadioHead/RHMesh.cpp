@@ -17,7 +17,7 @@ uint8_t RHMesh::_tmpMessage[RH_ROUTER_MAX_MESSAGE_LEN];
 
 ////////////////////////////////////////////////////////////////////
 // Constructors
-RHMesh::RHMesh(RHGenericDriver& driver, uint8_t thisAddress) 
+RHMesh::RHMesh(RHGenericDriver& driver, int32_t thisAddress) 
     : RHRouter(driver, thisAddress)
 {
 }
@@ -28,7 +28,7 @@ RHMesh::RHMesh(RHGenericDriver& driver, uint8_t thisAddress)
 ////////////////////////////////////////////////////////////////////
 // Discovers a route to the destination (if necessary), sends and 
 // waits for delivery to the next hop (but not for delivery to the final destination)
-uint8_t RHMesh::sendtoWait(uint8_t* buf, uint8_t len, uint8_t address, uint8_t flags)
+uint8_t RHMesh::sendtoWait(uint8_t* buf, uint8_t len, int32_t address, uint8_t flags)
 {
     if (len > RH_MESH_MAX_MESSAGE_LEN)
 	return RH_ROUTER_ERROR_INVALID_LENGTH;
@@ -122,7 +122,7 @@ void RHMesh::peekAtMessage(RoutedMessage* message, uint8_t messageLen)
 // This is called when a message is to be delivered to the next hop
 uint8_t RHMesh::route(RoutedMessage* message, uint8_t messageLen)
 {
-    uint8_t from = headerFrom(); // Might get clobbered during call to superclass route()
+    int32_t from = headerFrom(); // Might get clobbered during call to superclass route()
     uint8_t ret = RHRouter::route(message, messageLen);
     if (   ret == RH_ROUTER_ERROR_NO_ROUTE
 	|| ret == RH_ROUTER_ERROR_UNABLE_TO_DELIVER)
@@ -145,18 +145,18 @@ uint8_t RHMesh::route(RoutedMessage* message, uint8_t messageLen)
 
 ////////////////////////////////////////////////////////////////////
 // Subclasses may want to override
-bool RHMesh::isPhysicalAddress(uint8_t* address, uint8_t addresslen)
+bool RHMesh::isPhysicalAddress(int32_t* address, uint8_t addresslen)
 {
     // Can only handle physical addresses 1 octet long, which is the physical node address
     return addresslen == 1 && address[0] == _thisAddress;
 }
 
 ////////////////////////////////////////////////////////////////////
-bool RHMesh::recvfromAck(uint8_t* buf, uint8_t* len, uint8_t* source, uint8_t* dest, uint8_t* id, uint8_t* flags, uint8_t* hops)
+bool RHMesh::recvfromAck(uint8_t* buf, uint8_t* len, int32_t* source, int32_t* dest, uint8_t* id, uint8_t* flags, uint8_t* hops)
 {     
     uint8_t tmpMessageLen = sizeof(_tmpMessage);
-    uint8_t _source;
-    uint8_t _dest;
+    int32_t _source;
+    int32_t _dest;
     uint8_t _id;
     uint8_t _flags;
     uint8_t _hops;
@@ -233,7 +233,7 @@ bool RHMesh::recvfromAck(uint8_t* buf, uint8_t* len, uint8_t* source, uint8_t* d
 }
 
 ////////////////////////////////////////////////////////////////////
-bool RHMesh::recvfromAckTimeout(uint8_t* buf, uint8_t* len, uint16_t timeout, uint8_t* from, uint8_t* to, uint8_t* id, uint8_t* flags, uint8_t* hops)
+bool RHMesh::recvfromAckTimeout(uint8_t* buf, uint8_t* len, uint16_t timeout, int32_t* from, int32_t* to, uint8_t* id, uint8_t* flags, uint8_t* hops)
 {  
     unsigned long starttime = millis();
     int32_t timeLeft;

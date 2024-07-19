@@ -137,7 +137,7 @@ public:
     {
 	MeshMessageHeader   header;  ///< msgType = RH_MESH_MESSAGE_TYPE_ROUTE_DISCOVERY_*
 	uint8_t             destlen; ///< Reserved. Must be 1
-	uint8_t             dest;    ///< The address of the destination node whose route is being sought
+	int32_t             dest;    ///< The address of the destination node whose route is being sought
 	uint8_t             route[RH_MESH_MAX_MESSAGE_LEN - 2]; ///< List of node addresses visited so far. Length is implcit
     } MeshRouteDiscoveryMessage;
 
@@ -145,13 +145,13 @@ public:
     typedef struct
     {
 	MeshMessageHeader   header; ///< msgType = RH_MESH_MESSAGE_TYPE_ROUTE_FAILURE
-	uint8_t             dest; ///< The address of the destination towards which the route failed
+	int32_t             dest; ///< The address of the destination towards which the route failed
     } MeshRouteFailureMessage;
 
     /// Constructor. 
     /// \param[in] driver The RadioHead driver to use to transport messages.
     /// \param[in] thisAddress The address to assign to this node. Defaults to 0
-    RHMesh(RHGenericDriver& driver, uint8_t thisAddress = 0);
+    RHMesh(RHGenericDriver& driver, int32_t thisAddress = 0);
 
     /// Sends a message to the destination node. Initialises the RHRouter message header 
     /// (the SOURCE address is set to the address of this node, HOPS to 0) and calls 
@@ -172,7 +172,7 @@ public:
     ///         - RH_ROUTER_ERROR_NO_ROUTE There was no route for dest in the local routing table
     ///         - RH_ROUTER_ERROR_UNABLE_TO_DELIVER Not able to deliver to the next hop 
     ///           (usually because it dod not acknowledge due to being off the air or out of range
-    uint8_t sendtoWait(uint8_t* buf, uint8_t len, uint8_t dest, uint8_t flags = 0);
+    uint8_t sendtoWait(uint8_t* buf, uint8_t len, int32_t dest, uint8_t flags = 0);
 
     /// Starts the receiver if it is not running already, processes and possibly routes any received messages
     /// addressed to other nodes
@@ -197,7 +197,7 @@ public:
     /// \param[in] hops If present and not NULL, the referenced uint8_t will be set to the HOPS
     /// (not just those addressed to this node).
     /// \return true if a valid message was received for this node and copied to buf
-    bool recvfromAck(uint8_t* buf, uint8_t* len, uint8_t* source = NULL, uint8_t* dest = NULL, uint8_t* id = NULL, uint8_t* flags = NULL, uint8_t* hops = NULL);
+    bool recvfromAck(uint8_t* buf, uint8_t* len, int32_t* source = NULL, int32_t* dest = NULL, uint8_t* id = NULL, uint8_t* flags = NULL, uint8_t* hops = NULL);
 
     /// Starts the receiver if it is not running already.
     /// Similar to recvfromAck(), this will block until either a valid application layer 
@@ -213,7 +213,7 @@ public:
     /// \param[in] hops If present and not NULL, the referenced uint8_t will be set to the HOPS
     /// (not just those addressed to this node).
     /// \return true if a valid message was copied to buf
-    bool recvfromAckTimeout(uint8_t* buf, uint8_t* len,  uint16_t timeout, uint8_t* source = NULL, uint8_t* dest = NULL, uint8_t* id = NULL, uint8_t* flags = NULL, uint8_t* hops = NULL);
+    bool recvfromAckTimeout(uint8_t* buf, uint8_t* len,  uint16_t timeout, int32_t* source = NULL, int32_t* dest = NULL, uint8_t* id = NULL, uint8_t* flags = NULL, uint8_t* hops = NULL);
 
 protected:
 
@@ -247,7 +247,7 @@ protected:
     /// \param [in] address Address of the pyysical addres being tested
     /// \param [in] addresslen Lengthof the address in bytes
     /// \return true if the physical address of this node is identical to address
-    virtual bool isPhysicalAddress(uint8_t* address, uint8_t addresslen);
+    virtual bool isPhysicalAddress(int32_t* address, uint8_t addresslen);
 
 private:
     /// Temporary message buffer

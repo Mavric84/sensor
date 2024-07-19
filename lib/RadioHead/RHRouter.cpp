@@ -17,7 +17,7 @@ RHRouter::RoutedMessage RHRouter::_tmpMessage;
 
 ////////////////////////////////////////////////////////////////////
 // Constructors
-RHRouter::RHRouter(RHGenericDriver& driver, uint8_t thisAddress) 
+RHRouter::RHRouter(RHGenericDriver& driver, int32_t thisAddress) 
     : RHReliableDatagram(driver, thisAddress)
 {
     _max_hops = RH_DEFAULT_MAX_HOPS;
@@ -47,7 +47,7 @@ void RHRouter::setIsaRouter(bool isa_router)
     _isa_router = isa_router;
 }
 ////////////////////////////////////////////////////////////////////
-void RHRouter::addRouteTo(uint8_t dest, uint8_t next_hop, uint8_t state)
+void RHRouter::addRouteTo(int32_t dest, int32_t next_hop, uint8_t state)
 {
     uint8_t i;
 
@@ -90,7 +90,7 @@ void RHRouter::addRouteTo(uint8_t dest, uint8_t next_hop, uint8_t state)
 }
 
 ////////////////////////////////////////////////////////////////////
-RHRouter::RoutingTableEntry* RHRouter::getRouteTo(uint8_t dest)
+RHRouter::RoutingTableEntry* RHRouter::getRouteTo(int32_t dest)
 {
     uint8_t i;
     for (i = 0; i < RH_ROUTING_TABLE_SIZE; i++)
@@ -168,7 +168,7 @@ void RHRouter::printRoutingTable()
 }
 
 ////////////////////////////////////////////////////////////////////
-bool RHRouter::deleteRouteTo(uint8_t dest)
+bool RHRouter::deleteRouteTo(int32_t dest)
 {
     uint8_t i;
     for (i = 0; i < RH_ROUTING_TABLE_SIZE; i++)
@@ -198,14 +198,14 @@ void RHRouter::clearRoutingTable()
 }
 
 
-uint8_t RHRouter::sendtoWait(uint8_t* buf, uint8_t len, uint8_t dest, uint8_t flags)
+uint8_t RHRouter::sendtoWait(uint8_t* buf, uint8_t len, int32_t dest, uint8_t flags)
 {
     return sendtoFromSourceWait(buf, len, dest, _thisAddress, flags);
 }
 
 ////////////////////////////////////////////////////////////////////
 // Waits for delivery to the next hop (but not for delivery to the final destination)
-uint8_t RHRouter::sendtoFromSourceWait(uint8_t* buf, uint8_t len, uint8_t dest, uint8_t source, uint8_t flags)
+uint8_t RHRouter::sendtoFromSourceWait(uint8_t* buf, uint8_t len, int32_t dest, int32_t source, uint8_t flags)
 {
     if (((uint16_t)len + sizeof(RoutedMessageHeader)) > _driver.maxMessageLength())
 	return RH_ROUTER_ERROR_INVALID_LENGTH;
@@ -250,11 +250,11 @@ void RHRouter::peekAtMessage(RoutedMessage* message, uint8_t messageLen)
 }
 
 ////////////////////////////////////////////////////////////////////
-bool RHRouter::recvfromAck(uint8_t* buf, uint8_t* len, uint8_t* source, uint8_t* dest, uint8_t* id, uint8_t* flags, uint8_t* hops)
+bool RHRouter::recvfromAck(uint8_t* buf, uint8_t* len, int32_t* source, int32_t* dest, uint8_t* id, uint8_t* flags, uint8_t* hops)
 {  
     uint8_t tmpMessageLen = sizeof(_tmpMessage);
-    uint8_t _from;
-    uint8_t _to;
+    int32_t _from;
+    int32_t _to;
     uint8_t _id;
     uint8_t _flags;
     if (RHReliableDatagram::recvfromAck((uint8_t*)&_tmpMessage, &tmpMessageLen, &_from, &_to, &_id, &_flags))
@@ -341,7 +341,7 @@ bool RHRouter::recvfromAck(uint8_t* buf, uint8_t* len, uint8_t* source, uint8_t*
 }
 
 ////////////////////////////////////////////////////////////////////
-bool RHRouter::recvfromAckTimeout(uint8_t* buf, uint8_t* len, uint16_t timeout, uint8_t* source, uint8_t* dest, uint8_t* id, uint8_t* flags, uint8_t* hops)
+bool RHRouter::recvfromAckTimeout(uint8_t* buf, uint8_t* len, uint16_t timeout, int32_t* source, int32_t* dest, uint8_t* id, uint8_t* flags, uint8_t* hops)
 {  
     unsigned long starttime = millis();
     int32_t timeLeft;
